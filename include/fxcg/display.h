@@ -4,204 +4,218 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
-
+    
 #define LCD_WIDTH_PX 384
 #define LCD_HEIGHT_PX 216
-
-typedef unsigned short color_t;
-
-//General display manipulating syscalls:
-struct display_fill {
-    int x1;
-    int y1;
-    int x2;
-    int y2;
-    unsigned char mode;
-};
-void Bdisp_AreaClr( struct display_fill *area, unsigned char P2, unsigned short color );
-void Bdisp_EnableColor( int n );
-//Frame control:
-void DrawFrame( int color );
-unsigned short FrameColor( int mode, unsigned short color );
-void DrawFrameWorkbench( int, int, int, int, int );
-//VRAM general display manipulating syscalls:
-void *GetVRAMAddress(void); // Return a pointer to the system's video memory.
-void* GetSecondaryVRAMAddress(void); // Return a pointer to the memory used by SaveVRAM_1 and LoadVRAM_1.
-void Bdisp_AllClr_VRAM( void );
-void Bdisp_SetPoint_VRAM( int x, int y, int color );
-void Bdisp_SetPointWB_VRAM( int x, int y, int color );
-unsigned short Bdisp_GetPoint_VRAM( int x, int y );
-void SaveVRAM_1( void );
-void LoadVRAM_1( void );
-void Bdisp_Fill_VRAM( int color, int mode );
-//DD display manipulating syscalls:
-void Bdisp_AreaClr_DD_x3( void*p1 );
-void Bdisp_DDRegisterSelect( int registerno );
-void Bdisp_PutDisp_DD( void );
-void Bdisp_PutDisp_DD_stripe( int y1, int y2 );
-void Bdisp_SetPoint_DD( int x, int y, int color );
-unsigned short Bdisp_GetPoint_DD_Workbench( int x, int y );
-unsigned short Bdisp_GetPoint_DD( int x, int y );
-void DirectDrawRectangle( int x1, int y1, int x2, int y2, unsigned short color );
-void HourGlass( void );
-void Bdisp_DefineDMARange(int x1, int x2, int y1, int y2);
-unsigned short Bdisp_WriteDDRegister3_bit7(int value);
-
-// Graphic writing:
-struct display_graph {
-    int x;
-    int y;
-    int xofs;
-    int yofs;
-    int width;
-    int height;
-    char colormode;
-    char zero4;
-    char P20_1;
-    char P20_2;
-    int bitmap;
-    char color_idx1;
-    char color_idx2;
-    char color_idx3;
-    char P20_3;
-    char writemodify;
-    char writekind;
-    char zero6;
-    char one1;
-    int transparency;
-};
-
-void Bdisp_WriteGraphVRAM(struct display_graph* gd);
-void Bdisp_WriteGraphDD_WB(struct display_graph* gd);
-
-//Shape drawing:
-struct display_shape {
-    int dx;
-    int dy;
-    int wx;
-    int wy;
-    int color;
-    struct display_fill saved;
-};
-void Bdisp_ShapeBase3XVRAM( void*shape );
-void Bdisp_ShapeBase( unsigned char*work, struct display_shape *shape, int color, int line_width, int zero1, int zero2 );
-void Bdisp_ShapeToVRAM16C( void*, int color );
-void Bdisp_ShapeToDD( void*shape, int color );
-
-// The following rectangle-related syscalls draw a rectangle to VRAM, x between 0 and 383 (inclusive), y between 0 and 191 (inclusive).
-// These add 24 pixels automatically, avoiding the status area:
-
-// Draws a rectangle to VRAM using a TEXT_COLOR.
-void Bdisp_Rectangle( int x1, int y1, int x2, int y2, char color );
-// Draws a filled rectangle to VRAM using a TEXT_COLOR
-void Bdisp_FilledRectangle( int x1, int y1, int x2, int y2, char color );
-// Draws a filled rectangle to VRAM using a color_t
-void Bdisp_FilledRectangleFullColor( int x1, int y1, int x2, int y2, unsigned short color );
-
-
-//Background-related syscalls
-void SetBackGround( int );
-void WriteBackground( void*target, int width, int height, void*source, int, int, int );
-
-//Message boxes, error messages, dialogs and the like:
-void Box( int, int, int, int, int );
-void BoxInnerClear( int );
-void Box2( int, int );
-void BoxYLimits( int lines, int*top, int*bottom );
-void AUX_DisplayErrorMessage( int msgno );
-void MsgBoxPush( int lines );
-void MsgBoxPop( void );
-void DisplayMessageBox( unsigned char*message );
-short CharacterSelectDialog( void );
-unsigned char ColorIndexDialog1( unsigned char initial_index, unsigned short disable_mask );
-void MsgBoxMoveWB( void*buffer, int x0, int y0, int x1, int y1, int direction ); //it's more general purpose, works not only for MsgBoxes but for any VRAM contents.
-
-//Cursor manipulating syscalls:
-void locate_OS( int X, int y );
-void Cursor_SetFlashOn( unsigned char cursor_type );
-void Cursor_SetFlashOff( void );
-int SetCursorFlashToggle( int );
-void Keyboard_CursorFlash( void );
-
-//Character printing syscalls:
-enum
-{
-  TEXT_COLOR_BLACK = 0,
-  TEXT_COLOR_BLUE = 1,
-  TEXT_COLOR_GREEN = 2,
-  TEXT_COLOR_CYAN = 3,
-  TEXT_COLOR_RED = 4,
-  TEXT_COLOR_PURPLE = 5,
-  TEXT_COLOR_YELLOW = 6,
-  TEXT_COLOR_WHITE = 7
-};
-
-enum
-{
-  TEXT_MODE_NORMAL = 0x00,
-  TEXT_MODE_INVERT = 0x01,
-  TEXT_MODE_TRANSPARENT_BACKGROUND = 0x20,
-  TEXT_MODE_AND = 0x21
-};
-void PrintLine(const char *msg, int imax);
-void PrintLine2(int, int, const char *, int, int, int, int, int);
-void PrintXY_2( int mode, int x, int y, int msgno, int color );
-void PrintXY( int x, int y, const char *string, int mode, int color );
-void PrintCXY( int, int, const char *, int, int, int, int, int, int );
-void PrintGlyph( int, int, unsigned char*glyph, int, int color, int back_color, int );
-void*GetMiniGlyphPtr( unsigned short mb_glyph_no, unsigned short*glyph_info );
-void PrintMiniGlyph(int x, int y, void*glyph, int mode_flags, int glyph_width, int, int, int, int, int color, int back_color, int );
-void PrintMini( int *x, int *y, const char *MB_string, int mode_flags, unsigned int xlimit, int P6, int P7, int color, int back_color, int writeflag, int P11 );
-void PrintMiniMini( int *x, int *y, const char *MB_string, int mode1, char color, int mode2 );
-void Print_OS( const char*msg, int mode, int zero2 );
-void Bdisp_WriteSystemMessage( int x, int y, int msgno, int mode, char color3 );
-void Bdisp_MMPrintRef(int*x, int*y, unsigned char*, int mode, int xmax, int, int, int color, int, int, int);
-void Bdisp_MMPrint(int x, int y, unsigned char*, int mode, int xmax, int, int, int color, int backcolor, int, int);
-
-enum
-{
-    PRINT_CHARSET_DEFAULT = 0,
-    PRINT_CHARSET_GB18030 = 0x03a8,
-};
-
-/**
- * Set the character set used for following text output functions.
- *
- * Known values are provided as PRINT_CHARSET_* constants.
- *
- * Returns 1 if the provided charset code is recognized, 0 otherwise.
- */
-int ProcessPrintChars(unsigned short charset);
-
-/** Set the character set to GB18030. */
-void EnableGB18030(void);
-/** Set the character set to latin. */
-void DisableGB18030(void);
-
-//Progressbars and scrollbars:
-struct scrollbar
-{
-  unsigned int I1; // unknown changes indicator height, set to 0
-  unsigned int indicatormaximum; // max logical indicator range
-  unsigned int indicatorheight; // height of the indicator in units
-  unsigned int indicatorpos; // indicator position in units of max
-  unsigned int I5; // unknown, set to 0
-  unsigned short barleft; // x position of bar
-  unsigned short bartop; // y position of bar
-  unsigned short barheight; // height of bar
-  unsigned short barwidth; // width of bar
-} ;
-void Scrollbar(struct scrollbar *scrollbar);
-void StandardScrollbar( void* );
-void ProgressBar(int, int );
-void ProgressBar0(int P1, int P2, int P3, int current, int max);
-void ProgressBar2(unsigned char *heading, int current, int max);
-
-//Status area/header related syscalls:
-// define status area
+    
+    typedef unsigned short color_t;
+    
+    // MARK: -General display manipulating syscalls:
+    struct display_fill {
+        int x1;
+        int y1;
+        int x2;
+        int y2;
+        unsigned char mode;
+    };
+    typedef display_fill TDisplayFill;
+    
+    void Bdisp_AreaClr(TDisplayFill *area, unsigned char P2, unsigned short color);
+    void Bdisp_EnableColor(int n);
+    
+    // MARK: -Frame control:
+    void DrawFrame(int color);
+    unsigned short FrameColor(int mode, unsigned short color);
+    void DrawFrameWorkbench(int, int, int, int, int);
+    
+    // MARK: - MARK: -VRAM general display manipulating syscalls:
+    void *GetVRAMAddress(void); // Return a pointer to the system's video memory.
+    void* GetSecondaryVRAMAddress(void); // Return a pointer to the memory used by SaveVRAM_1 and LoadVRAM_1.
+    void Bdisp_AllClr_VRAM(void);
+    void Bdisp_SetPoint_VRAM(int x, int y, int color);
+    void Bdisp_SetPointWB_VRAM(int x, int y, int color);
+    unsigned short Bdisp_GetPoint_VRAM(int x, int y);
+    void SaveVRAM_1(void);
+    void LoadVRAM_1(void);
+    void Bdisp_Fill_VRAM(int color, int mode);
+    
+    // MARK: - MARK: -DD display manipulating syscalls:
+    void Bdisp_AreaClr_DD_x3(void*p1);
+    void Bdisp_DDRegisterSelect(int registerno);
+    void Bdisp_PutDisp_DD(void);
+    void Bdisp_PutDisp_DD_stripe(int y1, int y2);
+    void Bdisp_SetPoint_DD(int x, int y, int color);
+    unsigned short Bdisp_GetPoint_DD_Workbench(int x, int y);
+    unsigned short Bdisp_GetPoint_DD(int x, int y);
+    void DirectDrawRectangle(int x1, int y1, int x2, int y2, unsigned short color);
+    void HourGlass(void);
+    void Bdisp_DefineDMARange(int x1, int x2, int y1, int y2);
+    unsigned short Bdisp_WriteDDRegister3_bit7(int value);
+    
+    // MARK: - MARK: - Graphic writing:
+    struct display_graph {
+        int x;
+        int y;
+        int xofs;
+        int yofs;
+        int width;
+        int height;
+        char colormode;
+        char zero4;
+        char P20_1;
+        char P20_2;
+        int bitmap;
+        char color_idx1;
+        char color_idx2;
+        char color_idx3;
+        char P20_3;
+        char writemodify;
+        char writekind;
+        char zero6;
+        char one1;
+        int transparency;
+    };
+    typedef display_graph TDisplayGraph;
+    
+    void Bdisp_WriteGraphVRAM(struct display_graph* gd);
+    void Bdisp_WriteGraphDD_WB(struct display_graph* gd);
+    
+    // MARK: - MARK: -Shape drawing:
+    struct display_shape {
+        int dx;
+        int dy;
+        int wx;
+        int wy;
+        int color;
+        TDisplayFill saved;
+    };
+    typedef display_shape TDisplayShape;
+    
+    void Bdisp_ShapeBase3XVRAM(void *shape);
+    void Bdisp_ShapeBase(unsigned char *work, TDisplayShape *shape, int color, int line_width, int zero1, int zero2);
+    void Bdisp_ShapeToVRAM16C(void *, int color);
+    void Bdisp_ShapeToDD(void *shape, int color);
+    
+    // MARK: - The following rectangle-related syscalls draw a rectangle to VRAM, x between 0 and 383 (inclusive), y between 0 and 191 (inclusive).
+    // MARK: - These add 24 pixels automatically, avoiding the status area:
+    
+    // MARK: - Draws a rectangle to VRAM using a TEXT_COLOR.
+    void Bdisp_Rectangle(int x1, int y1, int x2, int y2, char color);
+    
+    // MARK: - Draws a filled rectangle to VRAM using a TEXT_COLOR
+    
+    void Bdisp_FilledRectangle(int x1, int y1, int x2, int y2, char color);
+    
+    // MARK: - Draws a filled rectangle to VRAM using a color_t
+    void Bdisp_FilledRectangleFullColor(int x1, int y1, int x2, int y2, unsigned short color);
+    
+    
+    // MARK: -Background-related syscalls
+    void SetBackGround(int);
+    void WriteBackground(void*target, int width, int height, void*source, int, int, int);
+    
+    // MARK: -Message boxes, error messages, dialogs and the like:
+    void Box(int, int, int, int, int);
+    void BoxInnerClear(int);
+    void Box2(int, int);
+    void BoxYLimits(int lines, int*top, int*bottom);
+    void AUX_DisplayErrorMessage(int msgno);
+    void MsgBoxPush(int lines);
+    void MsgBoxPop(void);
+    void DisplayMessageBox(unsigned char*message);
+    short CharacterSelectDialog(void);
+    unsigned char ColorIndexDialog1(unsigned char initial_index, unsigned short disable_mask);
+    void MsgBoxMoveWB(void*buffer, int x0, int y0, int x1, int y1, int direction); //it's more general purpose, works not only for MsgBoxes but for any VRAM contents.
+    
+    // MARK: -Cursor manipulating syscalls:
+    void locate_OS(int X, int y);
+    void Cursor_SetFlashOn(unsigned char cursor_type);
+    void Cursor_SetFlashOff(void);
+    int SetCursorFlashToggle(int);
+    void Keyboard_CursorFlash(void);
+    
+    // MARK: -Character printing syscalls:
+    enum {
+        TEXT_COLOR_BLACK = 0,
+        TEXT_COLOR_BLUE = 1,
+        TEXT_COLOR_GREEN = 2,
+        TEXT_COLOR_CYAN = 3,
+        TEXT_COLOR_RED = 4,
+        TEXT_COLOR_PURPLE = 5,
+        TEXT_COLOR_YELLOW = 6,
+        TEXT_COLOR_WHITE = 7
+    };
+    
+    enum {
+        TEXT_MODE_NORMAL = 0x00,
+        TEXT_MODE_INVERT = 0x01,
+        TEXT_MODE_TRANSPARENT_BACKGROUND = 0x20,
+        TEXT_MODE_AND = 0x21
+    };
+    
+    void PrintLine(const char *msg, int imax);
+    void PrintLine2(int, int, const char *, int, int, int, int, int);
+    void PrintXY_2(int mode, int x, int y, int msgno, int color);
+    void PrintXY(int x, int y, const char *string, int mode, int color);
+    void PrintCXY(int, int, const char *, int, int, int, int, int, int);
+    void PrintGlyph(int, int, unsigned char*glyph, int, int color, int back_color, int);
+    void*GetMiniGlyphPtr(unsigned short mb_glyph_no, unsigned short*glyph_info);
+    void PrintMiniGlyph(int x, int y, void*glyph, int mode_flags, int glyph_width, int, int, int, int, int color, int back_color, int);
+    void PrintMini(int *x, int *y, const char *MB_string, int mode_flags, unsigned int xlimit, int P6, int P7, int color, int back_color, int writeflag, int P11);
+    void PrintMiniMini(int *x, int *y, const char *MB_string, int mode1, char color, int mode2);
+    void Print_OS(const char*msg, int mode, int zero2);
+    void Bdisp_WriteSystemMessage(int x, int y, int msgno, int mode, char color3);
+    void Bdisp_MMPrintRef(int*x, int*y, unsigned char*, int mode, int xmax, int, int, int color, int, int, int);
+    void Bdisp_MMPrint(int x, int y, unsigned char*, int mode, int xmax, int, int, int color, int backcolor, int, int);
+    
+    enum
+    {
+        PRINT_CHARSET_DEFAULT = 0,
+        PRINT_CHARSET_GB18030 = 0x03a8,
+    };
+    
+    /**
+     * Set the character set used for following text output functions.
+     *
+     * Known values are provided as PRINT_CHARSET_* constants.
+     *
+     * Returns 1 if the provided charset code is recognized, 0 otherwise.
+     */
+    int ProcessPrintChars(unsigned short charset);
+    
+    /** Set the character set to GB18030. */
+    void EnableGB18030(void);
+    /** Set the character set to latin. */
+    void DisableGB18030(void);
+    
+    // MARK: -Progressbars and scrollbars:
+    struct scrollbar
+    {
+        unsigned int I1; // unknown changes indicator height, set to 0
+        unsigned int indicatormaximum; // max logical indicator range
+        unsigned int indicatorheight; // height of the indicator in units
+        unsigned int indicatorpos; // indicator position in units of max
+        unsigned int I5; // unknown, set to 0
+        unsigned short barleft; // x position of bar
+        unsigned short bartop; // y position of bar
+        unsigned short barheight; // height of bar
+        unsigned short barwidth; // width of bar
+    } ;
+    typedef scrollbar TScrollbar;
+    
+    void Scrollbar(TScrollbar *scrollbar);
+    void StandardScrollbar(void*);
+    void ProgressBar(int, int);
+    void ProgressBar0(int P1, int P2, int P3, int current, int max);
+    void ProgressBar2(unsigned char *heading, int current, int max);
+    
+    // MARK: -Status area/header related syscalls:
+    
+    // MARK: - define status area
 #define DSA_CLEAR                               0
 #define DSA_SETDEFAULT                          1
-// status area flags
+    
+    // MARK: - status area flags
 #define SAF_BATTERY                             0x0001
 #define SAF_ALPHA_SHIFT                         0x0002
 #define SAF_SETUP_INPUT_OUTPUT                  0x0004
@@ -211,58 +225,58 @@ void ProgressBar2(unsigned char *heading, int current, int max);
 #define SAF_SETUP_DISPLAY                       0x0040
 #define SAF_TEXT                                0x0100
 #define SAF_GLYPH                               0x0200
-
-int DefineStatusAreaFlags( int mode, int flags, char *color1, char *color2 );
-void DefineStatusGlyph( int, void* );
-void DefineStatusMessage( char*msg, short P2, char P3, char P4 );
-void DisplayStatusArea( void );
-void DrawHeaderLine( void );
-void EnableStatusArea( int );
-void Bdisp_HeaderFill( unsigned char color_idx1, unsigned char color_idx2 );
-void Bdisp_HeaderFill2( unsigned int, unsigned int, unsigned char, unsigned char );
-void Bdisp_HeaderText( void );
-void Bdisp_HeaderText2( void );
-void EnableDisplayHeader( int, int );
-//Status area icon syscalls: (it may be more appropriate to use the status area flags)
-void APP_EACT_StatusIcon( int ); //not sure what this is exactly for, if it displays something on screen it's here, otherwise in app.h. will test some day (gbl08ma)
-void SetupMode_StatusIcon( void ); //not sure what this does, doesn't seem to be documented anywhere. will test some day (gbl08ma)
-void d_c_Icon( unsigned int );
-void BatteryIcon( unsigned int );
-void KeyboardIcon( unsigned int );
-void LineIcon( unsigned int );
-void NormIcon( unsigned int );
-void RadIcon( unsigned int );
-void RealIcon( unsigned int );
-
-//Other:
-void FKey_Display( int, void* );
-void GetFKeyPtr( int, void* );
-void DispInt( int, int ); //not sure what this does, doesn't seem to be documented anywhere. will test some day (gbl08ma)
-int LocalizeMessage1( int msgno, char*result );
-int SMEM_MapIconToExt( unsigned char*filename, unsigned short*foldername, unsigned int*msgno, unsigned short*iconbuffer ); // despite starting with SMEM, this is mostly a graphical function used to get icons for different file types.
-
-//Not syscalls (defined within libfxcg):
-void VRAM_CopySprite(const color_t* data, int x, int y, int width, int height);
-void VRAM_XORSprite(const color_t* data, int x, int y, int width, int height);
-
-// tswilliamson : So far this appears to be the most reliable way to determine model
-typedef enum {
-    DT_CG20,    // or CG10
-    DT_CG50,
-    DT_Winsim
-} DeviceType;
-
-inline DeviceType getDeviceType(void) {
-  #if TARGET_PRIZM
-    return (unsigned int)GetVRAMAddress() == 0xAC000000 ? DT_CG50 : DT_CG20;
-  #else
-    return DT_Winsim;
-  #endif
-}
-
-// Original Author, Shaun McFall (Merthsoft)
-// Used with permission
-
+    
+    int DefineStatusAreaFlags(int mode, int flags, char *color1, char *color2);
+    void DefineStatusGlyph(int, void*);
+    void DefineStatusMessage(char*msg, short P2, char P3, char P4);
+    void DisplayStatusArea(void);
+    void DrawHeaderLine(void);
+    void EnableStatusArea(int);
+    void Bdisp_HeaderFill(unsigned char color_idx1, unsigned char color_idx2);
+    void Bdisp_HeaderFill2(unsigned int, unsigned int, unsigned char, unsigned char);
+    void Bdisp_HeaderText(void);
+    void Bdisp_HeaderText2(void);
+    void EnableDisplayHeader(int, int);
+    // MARK: -Status area icon syscalls: (it may be more appropriate to use the status area flags)
+    void APP_EACT_StatusIcon(int); //not sure what this is exactly for, if it displays something on screen it's here, otherwise in app.h. will test some day (gbl08ma)
+    void SetupMode_StatusIcon(void); //not sure what this does, doesn't seem to be documented anywhere. will test some day (gbl08ma)
+    void d_c_Icon(unsigned int);
+    void BatteryIcon(unsigned int);
+    void KeyboardIcon(unsigned int);
+    void LineIcon(unsigned int);
+    void NormIcon(unsigned int);
+    void RadIcon(unsigned int);
+    void RealIcon(unsigned int);
+    
+    // MARK: -Other:
+    void FKey_Display(int, void*);
+    void GetFKeyPtr(int, void*);
+    void DispInt(int, int); //not sure what this does, doesn't seem to be documented anywhere. will test some day (gbl08ma)
+    int LocalizeMessage1(int msgno, char*result);
+    int SMEM_MapIconToExt(unsigned char*filename, unsigned short*foldername, unsigned int*msgno, unsigned short*iconbuffer); // despite starting with SMEM, this is mostly a graphical function used to get icons for different file types.
+    
+    // MARK: -Not syscalls (defined within libfxcg):
+    void VRAM_CopySprite(const color_t* data, int x, int y, int width, int height);
+    void VRAM_XORSprite(const color_t* data, int x, int y, int width, int height);
+    
+    // MARK: - tswilliamson : So far this appears to be the most reliable way to determine model
+    typedef enum {
+        DT_CG20,    // or CG10
+        DT_CG50,
+        DT_Winsim
+    } TDeviceType;
+    
+    inline TDeviceType getDeviceType(void) {
+#if TARGET_PRIZM
+        return (unsigned int)GetVRAMAddress() == 0xAC000000 ? DT_CG50 : DT_CG20;
+#else
+        return DT_Winsim;
+#endif
+    }
+    
+    // MARK: - Original Author, Shaun McFall (Merthsoft)
+    // MARK: - Used with permission
+    
 #define COLOR_ALICEBLUE (color_t)0xF7DF
 #define COLOR_ANTIQUEWHITE (color_t)0xFF5A
 #define COLOR_AQUA (color_t)0x07FF
@@ -403,7 +417,7 @@ inline DeviceType getDeviceType(void) {
 #define COLOR_WHITESMOKE (color_t)0xF7BE
 #define COLOR_YELLOW (color_t)0xFFE0
 #define COLOR_YELLOWGREEN (color_t)0x9E66
-
+    
 #ifdef __cplusplus
 }
 #endif

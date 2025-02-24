@@ -26,7 +26,7 @@ wget https://ftp.gnu.org/gnu/binutils/binutils-2.36.tar.gz
 mkdir -p binutils
 tar -xvzf binutils-2.36.tar.gz --strip-components=1 -C binutils
 
-git clone https://github.com/tari/mkg3a.git
+git clone https://github.com/Insoft-UK/mkg3a.git
 git clone https://github.com/Insoft-UK/libfxcg.git
 ```
 

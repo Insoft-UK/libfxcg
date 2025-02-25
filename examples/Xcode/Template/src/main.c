@@ -42,7 +42,7 @@ void AddIn_quit(void)
     Bdisp_EnableColor(ColorModeIndex);
 }
 
-int AddIn_main(int argc, const char * argv[])
+void AddIn_setup(void)
 {
     SetQuitHandler(AddIn_quit);
     
@@ -55,15 +55,27 @@ int AddIn_main(int argc, const char * argv[])
     char indexColor = TEXT_COLOR_WHITE;
     DefineStatusAreaFlags(3, SAF_BATTERY | SAF_TEXT | SAF_GLYPH | SAF_ALPHA_SHIFT, &indexColor, &indexColor);
     EnableStatusArea(StatusAreaEnabled);
+}
+
+void AddIn_main(int argc, const char * argv[])
+{
+    AddIn_setup();
     
-    Print_OS("Press EXE to exit", 0, 0);
-    
-    
-    // It's important that an Add-In never returns.
+    Print_OS("Press MENU to exit", 0, 0);
     int key;
+
+    /*
+     The GetKey function can interrupt add-in execution and transfer
+     control back to the OS. When a new add-in is launched, the currently
+     running one is discarded, and the new add-in is loaded and executed.
+     
+     You should *NEVER* exit main in an add-in. If you do, running the
+     add-in again (until another add-in is executed) will result in a blank
+     screen before returning to the MENU screen. To prevent this, it’s best
+     to use a while loop to keep the add-in running.
+     */
+
     while (true) {
         GetKey(&key);
     }
-    
-    return 0;
 }

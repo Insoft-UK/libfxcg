@@ -14,6 +14,10 @@ typedef enum : unsigned char {
     AreaModeWhite = 0, AreaModeColor = 1
 } TAreaMode;
 
+typedef enum : int {
+    FrameModeWhite = 0, FrameModeColor = 1
+} TFrameMode;
+
 typedef struct {
     int x1;
     int y1;
@@ -84,7 +88,7 @@ extern "C" {
     
     // MARK: - Frame control:
     void DrawFrame(int color);
-    color_t FrameColor(int mode, color_t color);
+    color_t FrameColor(TFrameMode mode, color_t color);
     void DrawFrameWorkbench(int, int, int, int, int);
     
     // MARK: - VRAM general display manipulating syscalls:

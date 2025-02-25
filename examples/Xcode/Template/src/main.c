@@ -24,22 +24,45 @@
 #define AddIn_main main
 #endif
 
+#include <stdio.h>
+#include <stdint.h>
+
 #include <fxcg/display.h>
 #include <fxcg/keyboard.h>
 #include <fxcg/system.h>
 
-int AddIn_main(int argc, const char * argv[]) {
-    int key;
+#include "graphics.h"
+
+#define true 1
+
+void AddIn_quit(void)
+{
+    FrameColor(FrameModeColor, COLOR_WHITE);
+    DrawFrame(COLOR_WHITE);
+    Bdisp_EnableColor(ColorModeIndex);
+}
+
+int AddIn_main(int argc, const char * argv[])
+{
+    SetQuitHandler(AddIn_quit);
+    
+    FrameColor(FrameModeColor, COLOR_WHITE);
+    DrawFrame(COLOR_WHITE);
     
     Bdisp_AllClr_VRAM();
+    Bdisp_EnableColor(ColorModeFull);
+    
+    char indexColor = TEXT_COLOR_WHITE;
+    DefineStatusAreaFlags(3, SAF_BATTERY | SAF_TEXT | SAF_GLYPH | SAF_ALPHA_SHIFT, &indexColor, &indexColor);
+    EnableStatusArea(StatusAreaEnabled);
+    
     Print_OS("Press EXE to exit", 0, 0);
     
-    while (1) {
+    
+    // It's important that an Add-In never returns.
+    int key;
+    while (true) {
         GetKey(&key);
-        
-        if (key == KEY_CTRL_EXE) {
-            break;
-        }
     }
     
     return 0;

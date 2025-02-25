@@ -100,6 +100,12 @@ void *GetDDAddress(void)
 #include "CASIO/fxCG50_24pt0xE5XX.h"
 #include "CASIO/fxCG50_24pt0xE6XX.h"
 
+
+unsigned short fxCG_SAF(void)
+{
+    return _fxCG_SAF;
+}
+
 static GFXfont Get24ptFont(unsigned char extendedCode)
 {
     switch (extendedCode) {
@@ -729,7 +735,7 @@ void DisplayStatusArea(void)
     }
     
     for (int x = 0; x < LCD_WIDTH_PX; x++) {
-        _VRAM[x + 23 * LCD_WIDTH_PX] = 0;
+        _VRAM[x + 22 * LCD_WIDTH_PX] = 0;
     }
     
     if (_fxCG_SAF & SAF_BATTERY)

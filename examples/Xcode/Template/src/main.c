@@ -32,10 +32,12 @@
 #include <fxcg/system.h>
 
 #include "graphics.h"
-//#include "calc.h"
 #include "calctype.h"
-#include "consolas.h"
-#include "garamond.h"
+
+#include "fonts/consolas.h"
+#include "fonts/garamond.h"
+#include "fonts/commodore.h"
+#include "fonts/arial.h"
 
 #define true 1
 
@@ -82,11 +84,24 @@ int AddIn_main(int argc, const char * argv[])
         CalcType_DrawString(&Garamond, "Press MENU to exit", 0, 22 + 15, COLOR_RED);
         CalcType_DrawString(&Consolas, "You should *NEVER* exit main in an add-in.", 0, 22 + Garamond.height + 9, 0);
         
-        CalcType_DrawString(&Garamond, "Garamond", 0, 100, 0);
-        CalcType_DrawString(&Consolas, "Consolas", 0, 115, 0);
+        char str[225];
+        for (int i = 0; i < 224; i++) {
+            str[i]=i+33;
+        }
+        str[224]=0;
         
-        FXCG_drawLine(0, 40, LCD_WIDTH_PX - 1, 40, COLOR_RED);
+        int y = 70;
         
+        FXCG_drawLine(0, 54, LCD_WIDTH_PX - 1, 54, COLOR_BLACK);
+        
+        CalcType_DrawString(&Garamond, str, 0, y, 0);
+        y += Garamond.height * 3;
+        CalcType_DrawString(&Consolas, str, 0, y, 0);
+        y += Consolas.height * 2;
+        CalcType_DrawString(&Arial, str, 0, y, 0);
+        y += Arial.height * 2;
+        CalcType_DrawString(&Commodore, str, 0, y, 0);
+      
         GetKey(&key);
     }
     

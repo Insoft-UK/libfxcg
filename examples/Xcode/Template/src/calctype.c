@@ -140,6 +140,10 @@ void CalcType_DrawString(const TCalcTypeFont *font, const char *str, int x, int 
                 TCalcTypeGlyphData *glyph = (TCalcTypeGlyphData *)(font->glyphData + glyphOffset);
                 CalcType_DrawGlyph(glyph, (subX + glyph->xOffset) / 3, y + glyph->yOffset, color);
                 subX += glyph->xAdvance;
+                if (subX >= LCD_WIDTH_PX * 3) {
+                    subX = x * 3;
+                    y += font->height;
+                }
                 break;
         }
     }

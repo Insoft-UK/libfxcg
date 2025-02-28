@@ -16,8 +16,10 @@
 			isa = PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet;
 			buildPhase = 13EB1EDF2D69F6E100CA5328 /* Sources */;
 			membershipExceptions = (
-				consolas.h,
-				garamond.h,
+				fonts/arial.h,
+				fonts/commodore.h,
+				fonts/consolas.h,
+				fonts/garamond.h,
 			);
 		};
 /* End PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet section */

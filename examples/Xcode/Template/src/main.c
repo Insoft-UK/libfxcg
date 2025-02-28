@@ -32,6 +32,10 @@
 #include <fxcg/system.h>
 
 #include "graphics.h"
+//#include "calc.h"
+#include "calctype.h"
+#include "consolas.h"
+#include "garamond.h"
 
 #define true 1
 
@@ -57,12 +61,11 @@ void AddIn_setup(void)
     EnableStatusArea(StatusAreaEnabled);
 }
 
-void AddIn_main(int argc, const char * argv[])
+int AddIn_main(int argc, const char * argv[])
 {
-    AddIn_setup();
-    
-    Print_OS("Press MENU to exit", 0, 0);
     int key;
+    
+    AddIn_setup();
 
     /*
      The GetKey function can interrupt add-in execution and transfer
@@ -74,8 +77,16 @@ void AddIn_main(int argc, const char * argv[])
      screen before returning to the MENU screen. To prevent this, it’s best
      to use a while loop to keep the add-in running.
      */
-
+    
     while (true) {
+        CalcType_DrawString(&Garamond, "Press MENU to exit", 0, 22, 0);
+        CalcType_DrawString(&Consolas, "You should *NEVER* exit main in an add-in.", 0, 22 + Garamond.height, 0);
+        
+        CalcType_DrawString(&Garamond, "Garamond", 0, 60, 0);
+        CalcType_DrawString(&Consolas, "Consolas", 0, 80, 0);
+        
         GetKey(&key);
     }
+    
+    return 0;
 }

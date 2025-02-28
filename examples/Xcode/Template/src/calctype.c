@@ -64,9 +64,8 @@ static void CalcType_DrawGlyph(TCalcTypeGlyphData *glyph, int x, int y, unsigned
     color_t *vram = ((unsigned short*)GetVRAMAddress()) + x + y * 384;
     unsigned char *data = glyph->data;
 
-    for (int gy = 0; gy < glyph->height; gy++) {
-        for (int gx = 0; gx < glyph->width; gx++) {
-            // glyph data is packed 3:4:1
+    for (y = 0; y < glyph->height; y++) {
+        for (x = 0; x < glyph->width; x++) {
             int currentPixel = *vram;
             uint8_t rgb = *data++;
             
@@ -116,6 +115,8 @@ void CalcType_DrawString(const TCalcTypeFont *font, const char *str, int x, int 
 {
     int subX = x * 3;
     unsigned short glyphOffset;
+    
+    y += font->base;
     
     while (*str && subX < LCD_WIDTH_PX * 3) {
         char charactor = *str++;

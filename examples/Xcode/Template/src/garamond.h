@@ -111,7 +111,7 @@ const unsigned char __Garamond[] = {
 
 const TCalcTypeFont Garamond = {
 	.height = 20,
-	.base = 15,
+	.base = -15,
 	.space = 13,
     .glyphData = __Garamond,
     .glyphOffset = {

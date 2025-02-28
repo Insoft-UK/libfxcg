@@ -79,11 +79,13 @@ int AddIn_main(int argc, const char * argv[])
      */
     
     while (true) {
-        CalcType_DrawString(&Garamond, "Press MENU to exit", 0, 22, 0);
-        CalcType_DrawString(&Consolas, "You should *NEVER* exit main in an add-in.", 0, 22 + Garamond.height, 0);
+        CalcType_DrawString(&Garamond, "Press MENU to exit", 0, 22 + 15, COLOR_RED);
+        CalcType_DrawString(&Consolas, "You should *NEVER* exit main in an add-in.", 0, 22 + Garamond.height + 9, 0);
         
-        CalcType_DrawString(&Garamond, "Garamond", 0, 60, 0);
-        CalcType_DrawString(&Consolas, "Consolas", 0, 80, 0);
+        CalcType_DrawString(&Garamond, "Garamond", 0, 100, 0);
+        CalcType_DrawString(&Consolas, "Consolas", 0, 115, 0);
+        
+        FXCG_drawLine(0, 40, LCD_WIDTH_PX - 1, 40, COLOR_RED);
         
         GetKey(&key);
     }

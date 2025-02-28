@@ -29,8 +29,8 @@
 extern "C" {
 #endif
     
-    void Image_OrderedDitherRGB(uint8_t *image, const int width, const int height, const int channels);
-    void Image_FloydSteinbergDitherRGB(uint8_t *image, const int width, const int height, const int channels);
+    void Image_OrderedDitherRGB(uint8_t *image, const int width, const int height);
+    void Image_FloydSteinbergDitherRGB(uint8_t *image, const int width, const int height);
     
 #ifdef __cplusplus
 }

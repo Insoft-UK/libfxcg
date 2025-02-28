@@ -23,24 +23,21 @@
 #include <fxcg/display.h>
 #include <stdint.h>
 
-// the main font struct
-typedef struct __CalcTypeFont {
-	unsigned int   height;		    // pixel height of the font line in pixels
-	unsigned int   base;		    // y offset of base font line
-	unsigned int   space;			// width of the font space in sub-pixels
-	const uint8_t *glyphData;		// actual character data
-	uint16_t       glyphOffset[224];// offset to each char's data (minus 32), 0xFFFF if not available
+typedef struct CalcTypeFont {
+    uint8_t        height;           // Total height of the font in pixels.
+    int8_t         base;             // Baseline offset in pixels.
+    uint8_t        space;            // Width of a space character in subpixels.
+    const uint8_t *glyphData;        // Pointer to the raw glyph data.
+    uint16_t       glyphOffset[224]; // Array of offsets to each character’s glyph data (indexed by ASCII - 32), 0xFFFF if the glyph is not available.
 } TCalcTypeFont;
 
-// faux char data struct (it's embedded directly in byte data by CalcTyper
-typedef struct _CalcTypeGlyphData {
-    int8_t   xOffset;		// x offset (in subpixels) of the glyph
-    int8_t   yOffset;		// y offset (in real pixels) of the glyph
-    uint8_t  xAdvance;		// amount (in subpixels) to advance x value
-    uint8_t  width;			// width (in real pixels) of the data, though its subpixel encodd
-    uint8_t  height;		// height (in real pixels) of the data
-    uint8_t  data[1];		// pointer helper for data
-                            // data is encoded in RGB bytes for each pixel 3:4:1 (based on usefulness for intensity)
+typedef struct CalcTypeGlyphData {
+    int8_t   xOffset;                // Horizontal offset (in subpixels) of the glyph relative to the origin.
+    int8_t   yOffset;                // Vertical offset (in pixels) of the glyph relative to the baseline.
+    uint8_t  xAdvance;               // Horizontal distance (in subpixels) to advance after drawing this glyph.
+    uint8_t  width;                  // Width of the glyph in real pixels (subpixel encoded).
+    uint8_t  height;                 // Height of the glyph in real pixels.
+    uint8_t  data[1];                // Placeholder for glyph pixel data, stored as RGB332.
 } TCalcTypeGlyphData;
 
 #ifdef __cplusplus
